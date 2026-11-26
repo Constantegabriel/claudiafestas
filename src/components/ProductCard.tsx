@@ -5,6 +5,7 @@ import { formatPrice } from '@/lib/format';
 import type { Product } from '@/lib/types';
 import { QtyStepper } from './QtyStepper';
 import { Lightbox } from './Lightbox';
+import { CroppedImage } from './CroppedImage';
 
 export function ProductCard({ product }: { product: Product }) {
   const { add } = useCart();
@@ -57,16 +58,16 @@ export function ProductCard({ product }: { product: Product }) {
                 setPhoto(Math.round(el.scrollLeft / el.clientWidth));
               }}
             >
-              {product.images.map((src, i) => (
-                <button key={src} className="gallery-slide" onClick={() => setZoom(i)} aria-label={`Ampliar foto ${i + 1}`}>
-                  <img src={src} alt={i === 0 ? product.name : ''} loading="lazy" />
+              {product.images.map((img, i) => (
+                <button key={img.url} className="gallery-slide" onClick={() => setZoom(i)} aria-label={`Ampliar foto ${i + 1}`}>
+                  <CroppedImage image={img} alt={i === 0 ? product.name : ''} lazy />
                 </button>
               ))}
             </div>
             {product.images.length > 1 && (
               <div className="dots" aria-hidden>
-                {product.images.map((src, i) => (
-                  <span key={src} className={i === photo ? 'on' : ''} />
+                {product.images.map((img, i) => (
+                  <span key={img.url} className={i === photo ? 'on' : ''} />
                 ))}
               </div>
             )}
@@ -125,7 +126,7 @@ export function ProductCard({ product }: { product: Product }) {
         </button>
       </div>
 
-      {zoom !== null && <Lightbox images={product.images} start={zoom} alt={product.name} onClose={() => setZoom(null)} />}
+      {zoom !== null && <Lightbox images={product.images.map((i) => i.url)} start={zoom} alt={product.name} onClose={() => setZoom(null)} />}
     </article>
   );
 }

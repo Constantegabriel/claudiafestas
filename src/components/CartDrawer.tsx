@@ -5,6 +5,7 @@ import { formatPrice } from '@/lib/format';
 import { buildOrderMessage, cartTotal, whatsappLink } from '@/lib/whatsapp';
 import type { StoreSettings } from '@/lib/types';
 import { Drawer } from './Drawer';
+import { CroppedImage } from './CroppedImage';
 import { QtyStepper } from './QtyStepper';
 
 export function CartDrawer({ settings }: { settings: StoreSettings }) {
@@ -48,7 +49,7 @@ export function CartDrawer({ settings }: { settings: StoreSettings }) {
           <ul className="cart-list">
             {items.map((it) => (
               <li key={it.key} className="cart-item">
-                {it.image ? <img src={it.image} alt="" /> : <div className="cart-thumb"><ImageOff size={18} /></div>}
+                <div className="cart-thumb">{it.image ? <CroppedImage image={it.image} alt="" /> : <ImageOff size={18} />}</div>
                 <div className="cart-info">
                   <p className="cart-name">{it.name}</p>
                   {it.variation && <p className="muted small">{it.variation}</p>}

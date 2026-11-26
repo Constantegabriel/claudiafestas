@@ -9,6 +9,7 @@ import type { Product, StoreSettings } from '@/lib/types';
 import { AdminLogin } from './AdminLogin';
 import { ProductForm } from './ProductForm';
 import { Logo } from '@/components/Logo';
+import { CroppedImage } from '@/components/CroppedImage';
 
 export function AdminPage() {
   const [session, setSession] = useState<Session | null>(null);
@@ -158,13 +159,9 @@ function AdminPanel({ email }: { email: string | null }) {
               <ul className="admin-list">
                 {visible.map((p) => (
                   <li key={p.id} className={p.active ? '' : 'inactive'}>
-                    {p.images[0] ? (
-                      <img src={p.images[0]} alt="" />
-                    ) : (
-                      <div className="cart-thumb">
-                        <ImageOff size={18} />
-                      </div>
-                    )}
+                    <div className="cart-thumb">
+                      {p.images[0] ? <CroppedImage image={p.images[0]} alt="" /> : <ImageOff size={18} />}
+                    </div>
                     <button className="admin-item-info" onClick={() => setEditing(p)}>
                       <span className="cart-name">{p.name}</span>
                       <span className="muted small">

@@ -1,6 +1,6 @@
 import { blobToDataUrl, resizeImage } from '@/lib/image';
 import { newId } from '@/lib/format';
-import { DEFAULT_SETTINGS, type Product, type StoreSettings } from '@/lib/types';
+import { DEFAULT_SETTINGS, toImages, type Product, type StoreSettings } from '@/lib/types';
 import { sortProducts, type CatalogRepo } from './repo';
 
 const PRODUCTS = 'catalogo:products';
@@ -27,7 +27,7 @@ function write(key: string, value: unknown) {
 export function createLocalRepo(): CatalogRepo {
   return {
     async listProducts(opts) {
-      const all = read<Product[]>(PRODUCTS, []);
+      const all = read<Product[]>(PRODUCTS, []).map((p) => ({ ...p, images: toImages(p.images) }));
       return sortProducts(opts?.includeInactive ? all : all.filter((p) => p.active));
     },
     async saveProduct(input) {

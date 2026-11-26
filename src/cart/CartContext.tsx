@@ -1,3 +1,4 @@
+import { toImage, type ProductImage } from '@/lib/types';
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
 
 export interface CartItem {
@@ -7,7 +8,7 @@ export interface CartItem {
   name: string;
   variation: string | null;
   unitPrice: number | null;
-  image: string | null;
+  image: ProductImage | null;
   qty: number;
 }
 
@@ -27,7 +28,8 @@ const CartContext = createContext<CartState | null>(null);
 
 function load(): CartItem[] {
   try {
-    return JSON.parse(localStorage.getItem(KEY) ?? '[]') as CartItem[];
+    const items = JSON.parse(localStorage.getItem(KEY) ?? '[]') as CartItem[];
+    return items.map((it) => ({ ...it, image: toImage(it.image) }));
   } catch {
     return [];
   }

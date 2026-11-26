@@ -1,10 +1,12 @@
 import { useEffect, useMemo, useRef, useState, type FormEvent } from 'react';
-import { ArrowLeft, ChevronLeft, ChevronRight, ImagePlus, Loader2, Plus, Star, Trash2, UploadCloud, X } from 'lucide-react';
+import { ArrowLeft, ChevronLeft, ChevronRight, Crop, ImagePlus, Loader2, Plus, Star, Trash2, UploadCloud, X } from 'lucide-react';
 import { repo } from '@/data';
 import { newId, parsePrice, priceToInput } from '@/lib/format';
-import type { Product, ProductInput } from '@/lib/types';
+import { DEFAULT_CROP, type Product, type ProductImage, type ProductInput } from '@/lib/types';
 import { CartProvider } from '@/cart/CartContext';
 import { ProductCard } from '@/components/ProductCard';
+import { CroppedImage } from '@/components/CroppedImage';
+import { CropEditor } from '@/components/CropEditor';
 
 interface VariationDraft {
   id: string;
@@ -26,7 +28,8 @@ export function ProductForm({ product, categories, onSaved, onCancel }: Props) {
   const [category, setCategory] = useState(product?.category ?? '');
   const [description, setDescription] = useState(product?.description ?? '');
   const [price, setPrice] = useState(priceToInput(product?.price ?? null));
-  const [images, setImages] = useState<string[]>(product?.images ?? []);
+  const [images, setImages] = useState<ProductImage[]>(product?.images ?? []);
+  const [cropping, setCropping] = useState<string | null>(null);
   const [variationLabel, setVariationLabel] = useState(product?.variationLabel ?? '');
   const [variations, setVariations] = useState<VariationDraft[]>(
     (product?.variations ?? []).map((v) => ({ id: v.id, name: v.name, price: priceToInput(v.price) })),
@@ -63,7 +66,7 @@ export function ProductForm({ product, categories, onSaved, onCancel }: Props) {
     for (const file of list) {
       try {
         const url = await repo.uploadImage(file);
-        setImages((prev) => [...prev, url]);
+        setImages((prev) => [...prev, { url, ...DEFAULT_CROP }]);
       } catch (e) {
         setError(`Não foi possível enviar "${file.name}": ${(e as Error).message}`);
       } finally {
@@ -328,9 +331,16 @@ export function ProductForm({ product, categories, onSaved, onCancel }: Props) {
             >
               {images.length > 0 || uploading > 0 ? (
                 <div className="photo-grid">
-                  {images.map((src, i) => (
-                    <div key={src} className={`photo ${i === 0 ? 'is-main' : ''}`}>
-                      <img src={src} alt={`Foto ${i + 1}`} />
+                  {images.map((img, i) => (
+                    <div key={img.url} className={`photo ${i === 0 ? 'is-main' : ''}`}>
+                      <button
+                        type="button"
+                        className="photo-open"
+                        aria-label={`Ajustar enquadramento da foto ${i + 1}`}
+                        onClick={() => setCropping(img.url)}
+                      >
+                        <CroppedImage image={img} alt={`Foto ${i + 1}`} />
+                      </button>
                       {i === 0 ? (
                         <span className="photo-tag">Principal</span>
                       ) : (
@@ -339,7 +349,7 @@ export function ProductForm({ product, categories, onSaved, onCancel }: Props) {
                           className="photo-btn star"
                           aria-label="Usar como foto principal"
                           title="Usar como principal"
-                          onClick={() => setImages((prev) => [src, ...prev.filter((s) => s !== src)])}
+                          onClick={() => setImages((prev) => [img, ...prev.filter((s) => s.url !== img.url)])}
                         >
                           <Star size={14} />
                         </button>
@@ -348,9 +358,18 @@ export function ProductForm({ product, categories, onSaved, onCancel }: Props) {
                         type="button"
                         className="photo-btn remove"
                         aria-label="Remover foto"
-                        onClick={() => setImages((prev) => prev.filter((s) => s !== src))}
+                        onClick={() => setImages((prev) => prev.filter((s) => s.url !== img.url))}
                       >
                         <X size={14} />
+                      </button>
+                      <button
+                        type="button"
+                        className="photo-btn crop"
+                        aria-label="Ajustar enquadramento"
+                        title="Ajustar enquadramento"
+                        onClick={() => setCropping(img.url)}
+                      >
+                        <Crop size={14} />
                       </button>
                       {images.length > 1 && (
                         <div className="photo-move">
@@ -388,7 +407,12 @@ export function ProductForm({ product, categories, onSaved, onCancel }: Props) {
               )}
             </div>
             <input ref={fileInput} type="file" accept="image/*" multiple hidden onChange={(e) => addPhotos(e.target.files)} />
-            {images.length > 1 && <p className="muted small">A primeira foto é a da capa. Use as setas para reordenar.</p>}
+            {images.length > 0 && (
+              <p className="muted small">
+                Toque numa foto para escolher a parte que aparece no quadro.
+                {images.length > 1 && ' A primeira é a capa; use as setas para reordenar.'}
+              </p>
+            )}
           </section>
 
           <section className="panel pf-visibility">
@@ -414,6 +438,17 @@ export function ProductForm({ product, categories, onSaved, onCancel }: Props) {
           </section>
         </div>
       </div>
+
+      {cropping && images.some((i) => i.url === cropping) && (
+        <CropEditor
+          image={images.find((i) => i.url === cropping)!}
+          onClose={() => setCropping(null)}
+          onApply={(next) => {
+            setImages((prev) => prev.map((i) => (i.url === next.url ? next : i)));
+            setCropping(null);
+          }}
+        />
+      )}
 
       <div className="pf-bottom">
         <button type="button" className="btn outline" onClick={cancel}>

@@ -1,7 +1,7 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { resizeImage } from '@/lib/image';
 import { newId } from '@/lib/format';
-import { DEFAULT_SETTINGS, type Product, type Variation } from '@/lib/types';
+import { DEFAULT_SETTINGS, toImages, type Product, type Variation } from '@/lib/types';
 import { sortProducts, type CatalogRepo } from './repo';
 
 const BUCKET = 'produtos';
@@ -12,7 +12,7 @@ interface ProductRow {
   description: string;
   category: string;
   price: number | string | null;
-  images: string[] | null;
+  images: unknown;
   variation_label: string;
   variations: Variation[] | null;
   active: boolean;
@@ -26,7 +26,7 @@ function fromRow(r: ProductRow): Product {
     description: r.description,
     category: r.category,
     price: r.price === null ? null : Number(r.price),
-    images: r.images ?? [],
+    images: toImages(r.images),
     variationLabel: r.variation_label,
     variations: (r.variations ?? []).map((v) => ({ ...v, price: v.price === null ? null : Number(v.price) })),
     active: r.active,
@@ -70,7 +70,7 @@ export function createSupabaseRepo(sb: SupabaseClient): CatalogRepo {
     async removeProduct(product) {
       const { error } = await sb.from('products').delete().eq('id', product.id);
       if (error) throw error;
-      const paths = product.images.map(storagePath).filter((p): p is string => p !== null);
+      const paths = product.images.map((img) => storagePath(img.url)).filter((p): p is string => p !== null);
       if (paths.length) await sb.storage.from(BUCKET).remove(paths); // limpeza; falha aqui não importa
     },
     async uploadImage(file) {
