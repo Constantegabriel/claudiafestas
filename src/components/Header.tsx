@@ -1,6 +1,9 @@
-import { Menu, Search, ShoppingCart, X } from 'lucide-react';
+import { Menu, MessageCircle, ShoppingCart } from 'lucide-react';
 import { useCart } from '@/cart/CartContext';
+import { whatsappLink } from '@/lib/whatsapp';
 import type { StoreSettings } from '@/lib/types';
+import { Logo } from './Logo';
+import { SearchField } from './SearchField';
 
 interface Props {
   settings: StoreSettings;
@@ -9,40 +12,47 @@ interface Props {
   onMenu: () => void;
 }
 
+/**
+ * Celular: linha do logo (rola junto com a página) + barra de busca fixa no topo.
+ * Notebook: uma linha só, fixa, com logo, busca, WhatsApp e carrinho.
+ */
 export function Header({ settings, query, onQuery, onMenu }: Props) {
   const { count, setOpen } = useCart();
   return (
-    <header className="header">
-      <div className="header-row container">
-        <button className="icon-btn" aria-label="Abrir menu" onClick={onMenu}>
-          <Menu size={24} />
-        </button>
-        <a href="/" className="brand">
-          <span className="brand-name">{settings.storeName}</span>
-          {settings.tagline && <span className="brand-tagline">{settings.tagline}</span>}
-        </a>
-        <button className="icon-btn cart-btn" aria-label={`Abrir carrinho (${count} itens)`} onClick={() => setOpen(true)}>
-          <ShoppingCart size={24} />
-          {count > 0 && <span className="badge">{count > 99 ? '99+' : count}</span>}
-        </button>
-      </div>
-      <div className="container search-wrap">
-        <label className="search">
-          <Search size={18} aria-hidden />
-          <input
-            type="search"
-            placeholder="Buscar produtos…"
-            value={query}
-            onChange={(e) => onQuery(e.target.value)}
-            aria-label="Buscar produtos"
-          />
-          {query && (
-            <button className="search-clear" aria-label="Limpar busca" onClick={() => onQuery('')}>
-              <X size={16} />
-            </button>
+    <>
+      <header className="header">
+        <div className="container header-row">
+          <button className="icon-btn menu-btn" aria-label="Abrir menu" onClick={onMenu}>
+            <Menu size={26} />
+          </button>
+          <a href="/" className="brand" aria-label={`${settings.storeName}, início`}>
+            <Logo alt={settings.storeName} />
+          </a>
+          <div className="header-search-desktop">
+            <SearchField value={query} onChange={onQuery} />
+          </div>
+          {settings.whatsapp && (
+            <a
+              className="header-link"
+              href={whatsappLink(settings.whatsapp, 'Olá! Vim pelo catálogo e tenho uma dúvida.')}
+              target="_blank"
+              rel="noreferrer"
+            >
+              <MessageCircle size={20} /> Fale conosco
+            </a>
           )}
-        </label>
+          <button className="cart-btn" aria-label={`Abrir carrinho (${count} itens)`} onClick={() => setOpen(true)}>
+            <ShoppingCart size={24} />
+            <span className="cart-btn-label">Carrinho</span>
+            {count > 0 && <span className="badge">{count > 99 ? '99+' : count}</span>}
+          </button>
+        </div>
+      </header>
+      <div className="search-sticky">
+        <div className="container">
+          <SearchField value={query} onChange={onQuery} />
+        </div>
       </div>
-    </header>
+    </>
   );
 }

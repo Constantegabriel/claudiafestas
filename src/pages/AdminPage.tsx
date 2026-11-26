@@ -8,6 +8,7 @@ import { useSettings } from '@/lib/useSettings';
 import type { Product, StoreSettings } from '@/lib/types';
 import { AdminLogin } from './AdminLogin';
 import { ProductForm } from './ProductForm';
+import { Logo } from '@/components/Logo';
 
 export function AdminPage() {
   const [session, setSession] = useState<Session | null>(null);
@@ -99,7 +100,10 @@ function AdminPanel({ email }: { email: string | null }) {
     <div className="admin">
       <header className="admin-header">
         <div className="container narrow admin-header-row">
-          <strong>Admin</strong>
+          <span className="admin-brand">
+            <Logo alt="Claudia Festas" />
+            <strong>Admin</strong>
+          </span>
           <div className="admin-header-actions">
             <a className="btn ghost" href="/" target="_blank" rel="noreferrer">
               <Store size={18} /> Ver loja

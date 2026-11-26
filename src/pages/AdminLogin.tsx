@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from 'react';
 import { supabase } from '@/lib/supabase';
+import { Logo } from '@/components/Logo';
 
 const MESSAGES: Record<string, string> = {
   'Invalid login credentials': 'E-mail ou senha incorretos.',
@@ -25,6 +26,7 @@ export function AdminLogin() {
   return (
     <div className="auth-page">
       <form className="auth-card" onSubmit={submit}>
+        <Logo alt="Claudia Festas" className="auth-logo" />
         <h1>Área administrativa</h1>
         <p className="muted">Entre para cadastrar e editar os produtos.</p>
         <label className="field">

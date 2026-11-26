@@ -8,10 +8,11 @@ interface Props {
   title: ReactNode;
   children: ReactNode;
   footer?: ReactNode;
+  className?: string;
 }
 
 /** Painel lateral (menu e carrinho). Fecha com Esc ou tocando fora. */
-export function Drawer({ open, onClose, side, title, children, footer }: Props) {
+export function Drawer({ open, onClose, side, title, children, footer, className }: Props) {
   useEffect(() => {
     if (!open) return;
     const onKey = (e: KeyboardEvent) => e.key === 'Escape' && onClose();
@@ -26,7 +27,7 @@ export function Drawer({ open, onClose, side, title, children, footer }: Props) 
   return (
     <div className={`drawer-root ${open ? 'open' : ''}`} aria-hidden={!open}>
       <div className="drawer-backdrop" onClick={onClose} />
-      <aside className={`drawer drawer-${side}`} role="dialog" aria-modal="true" inert={!open}>
+      <aside className={`drawer drawer-${side} ${className ?? ''}`} role="dialog" aria-modal="true" inert={!open}>
         <div className="drawer-head">
           <h2>{title}</h2>
           <button className="icon-btn" aria-label="Fechar" onClick={onClose}>

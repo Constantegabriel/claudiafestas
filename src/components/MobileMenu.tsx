@@ -3,6 +3,7 @@ import { useCart } from '@/cart/CartContext';
 import { whatsappLink } from '@/lib/whatsapp';
 import type { StoreSettings } from '@/lib/types';
 import { Drawer } from './Drawer';
+import { Logo } from './Logo';
 
 interface Props {
   open: boolean;
@@ -22,7 +23,7 @@ export function MobileMenu({ open, onClose, settings, categories, activeCategory
   };
 
   return (
-    <Drawer open={open} onClose={onClose} side="left" title={settings.storeName}>
+    <Drawer open={open} onClose={onClose} side="left" title={<Logo alt={settings.storeName} />} className="drawer-menu">
       <nav className="menu">
         <p className="menu-label">Categorias</p>
         <button className={`menu-item ${activeCategory === null ? 'active' : ''}`} onClick={() => pick(null)}>
