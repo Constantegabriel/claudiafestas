@@ -256,6 +256,16 @@ h1, h2, h3 { margin: 0; line-height: 1.2; }
 .footer-wa svg { color: var(--whatsapp); }
 @media (min-width: 960px) { .footer-inner { flex-direction: row; text-align: left; gap: 20px; } }
 
+.credit { background: #1c1917; text-align: center; padding: 14px 16px; }
+.credit a {
+  display: inline-flex; align-items: center; gap: 8px; color: rgb(255 255 255 / .75);
+  font-size: 13px; text-decoration: none; transition: color .15s;
+}
+.credit img { width: 20px; height: 20px; opacity: .9; }
+.credit strong { color: #fff; font-weight: 700; letter-spacing: .02em; }
+.credit a:hover, .credit a:hover strong { color: var(--orange); }
+.credit a:hover img { opacity: 1; }
+
 /* Barra do carrinho (celular) */
 .cart-bar {
   position: fixed; left: 12px; right: 12px; bottom: calc(12px + env(safe-area-inset-bottom)); z-index: 30;
@@ -269,7 +279,7 @@ h1, h2, h3 { margin: 0; line-height: 1.2; }
 .cart-bar-icon .badge { position: absolute; top: -6px; right: -6px; border-color: var(--orange); }
 .cart-bar-text { flex: 1; display: flex; flex-direction: column; line-height: 1.25; }
 .cart-bar-text small { opacity: .9; font-size: 13px; }
-.cart-bar-spacer { height: 84px; }
+.cart-bar-spacer { height: 84px; background: #1c1917; }
 @keyframes bar-in { from { transform: translateY(140%); } }
 @media (min-width: 960px) { .cart-bar, .cart-bar-spacer { display: none; } }
 

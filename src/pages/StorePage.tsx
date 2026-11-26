@@ -180,6 +180,14 @@ export function StorePage() {
         </div>
       </footer>
 
+      <div className="credit">
+        <a href="https://armetec.com.br" target="_blank" rel="noopener">
+          Desenvolvido por
+          <img src="/armetec.png" alt="" width={20} height={20} />
+          <strong>Armetec</strong>
+        </a>
+      </div>
+
       <CartBar />
       <MobileMenu
         open={menuOpen}
