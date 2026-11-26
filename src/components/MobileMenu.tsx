@@ -1,4 +1,4 @@
-import { ChevronRight, MessageCircle, ShoppingCart } from 'lucide-react';
+import { ChevronRight, Lock, MessageCircle, ShoppingCart } from 'lucide-react';
 import { useCart } from '@/cart/CartContext';
 import { whatsappLink } from '@/lib/whatsapp';
 import type { StoreSettings } from '@/lib/types';
@@ -62,6 +62,9 @@ export function MobileMenu({ open, onClose, settings, categories, activeCategory
           </a>
         )}
       </nav>
+      <a className="menu-admin" href="/admin">
+        <Lock size={16} /> Área administrativa
+      </a>
     </Drawer>
   );
 }

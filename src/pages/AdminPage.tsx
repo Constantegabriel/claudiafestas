@@ -80,7 +80,7 @@ function AdminPanel({ email }: { email: string | null }) {
   if (editing) {
     return (
       <div className="admin">
-        <div className="container narrow">
+        <div className="container form-wide">
           <ProductForm
             product={editing === 'new' ? null : editing}
             categories={categories}
